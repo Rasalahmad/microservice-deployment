@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Microservices Deployment Documentation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+        padding: 20px;
+        line-height: 1.6;
+        background-color: #f4f4f4;
+      }
+      h1,
+      h2,
+      h3 {
+        color: #333;
+      }
+      pre {
+        background: #eee;
+        padding: 10px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background: white;
+      }
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      th {
+        background: #333;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Microservices Deployment Documentation</h1>
+
+    <h2>Server Information</h2>
+    <ul>
+      <li><strong>Server IP:</strong> 159.223.175.176</li>
+      <li><strong>Services Running on Ports:</strong> 5000 - 5004</li>
+      <li><strong>Process Manager:</strong> PM2</li>
+      <li><strong>Reverse Proxy:</strong> Nginx</li>
+      <li><strong>Files Location:</strong> /var/www/seoappservices</li>
+    </ul>
+
+    <h2>Microservices Overview</h2>
+    <table>
+      <tr>
+        <th>Service Name</th>
+        <th>URL</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td>API Service</td>
+        <td>http://159.223.175.176:5000</td>
+        <td>Main API service</td>
+      </tr>
+      <tr>
+        <td>Mail Sender Service</td>
+        <td>http://159.223.175.176:5001</td>
+        <td>Handles email sending</td>
+      </tr>
+      <tr>
+        <td>Prospect Queue Service</td>
+        <td>http://159.223.175.176:5002</td>
+        <td>Manages prospect queues</td>
+      </tr>
+      <tr>
+        <td>Mail Track Service</td>
+        <td>http://159.223.175.176:5005</td>
+        <td>Tracks sent emails using custom domain</td>
+      </tr>
+      <tr>
+        <td>SEO Metric Service</td>
+        <td>http://159.223.175.176:5004</td>
+        <td>SEO Metric Service</td>
+      </tr>
+    </table>
+
+    <h2>PM2 Process Management</h2>
+    <h3>Installing PM2</h3>
+    <pre>npm install -g pm2</pre>
+
+    <h3>Starting Services with PM2</h3>
+    <pre>pm2 start server.js --name "service-name"</pre>
+
+    <h3>Managing Services with PM2</h3>
+    <pre>
+pm2 list
+pm2 restart service-name
+pm2 stop service-name
+pm2 delete service-name
+    </pre>
+
+    <h3>Auto-start PM2 on Reboot</h3>
+    <pre>
+pm2 startup
+pm2 save
+    </pre>
+
+    <h2>Nginx Configuration</h2>
+    <h3>Installing Nginx</h3>
+    <pre>sudo apt update && sudo apt install nginx -y</pre>
+
+    <h3>Configuring Nginx Reverse Proxy</h3>
+    <pre>
+server {
+    listen 80;
+    server_name 138.197.109.194;
+
+    location /api/ {
+        proxy_pass http://localhost:5000/;
+    }
+
+    location /mail-sender/ {
+        proxy_pass http://localhost:5001/;
+    }
+
+    location /prospect-queue/ {
+        proxy_pass http://localhost:5002/;
+    }
+    
+    location /mail-track/ {
+        proxy_pass http://localhost:5003/;
+    }
+
+    location /seo-metric/ {
+        proxy_pass http://localhost:5004/;
+    }
+}
+    </pre>
+
+    <h3>Restarting Nginx</h3>
+    <pre>sudo systemctl restart nginx</pre>
+
+    <h3>Checking Nginx Status</h3>
+    <pre>sudo systemctl status nginx</pre>
+
+    <h2>Enabling HTTPS (SSL) with Certbot</h2>
+    <pre>
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d yourdomain.com
+    </pre>
+
+    <h3>Auto-renew SSL</h3>
+    <pre>sudo certbot renew --dry-run</pre>
+
+    <h2>Logs and Debugging</h2>
+    <h3>PM2 Logs</h3>
+    <pre>pm2 logs service-name</pre>
+
+    <h3>Nginx Logs</h3>
+    <pre>
+sudo tail -f /var/log/nginx/access.log
+sudo tail -f /var/log/nginx/error.log
+    </pre>
+
+    <h2>Maintenance and Scaling</h2>
+    <pre>
+pm2 save
+pm2 restart all
+    </pre>
+
+    <p>
+      This documentation ensures smooth operation and maintenance of the
+      microservices using <strong>Nginx</strong> and <strong>PM2</strong>.
+    </p>
+  </body>
+</html>
